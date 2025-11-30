@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <title>Fami – Founding Families</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --text-main: #0a0a0a;
+      --text-muted: #666666;
+      --border: #f0f0f0;
+      --card-bg: #FFFFFF;
+      --input-bg: #FFFFFF;
+      --input-border: #e5e5e5;
+      --focus-ring: #000000;
+      --primary: #166534;
+      --hover-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* --- AMBIENT GLOW --- */
+    .ambient-glow {
+      position: absolute;
+      width: 100%;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(22, 101, 52, 0.08) 0%, rgba(255, 255, 255, 0) 60%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+
+    /* HEADER */
+    header {
+      padding: 24px 0 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: -0.04em;
+      color: var(--text-main);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      transition: opacity 0.2s;
+    }
+
+    .icon-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+
+    .logo:hover .icon-box {
+      background: #e5e7eb;
+      transform: translateX(-2px);
+    }
+
+    .logo:hover {
+      opacity: 0.9;
+    }
+
+    /* LANGUAGE TOGGLE */
+    .lang-toggle-container {
+      display: flex;
+      background: #f3f4f6;
+      padding: 4px;
+      border-radius: 99px;
+      gap: 2px;
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #888;
+      padding: 6px 14px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .lang-btn.active {
+      background: #fff;
+      color: #000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .lang-btn:hover:not(.active) {
+      color: #000;
+    }
+
+    /* LAYOUT */
+    .split-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 80px;
+      align-items: start;
+      margin-top: 40px;
+    }
+
+    .info-side {
+      padding-top: 20px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.8);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+      color: var(--text-main);
+    }
+
+    .lead {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+
+    .benefit-list {
+      list-style: none;
+      margin-bottom: 40px;
+    }
+
+    .benefit-list li {
+      margin-bottom: 20px;
+      padding-left: 28px;
+      position: relative;
+      font-size: 1rem;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .benefit-list li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: #cbd5e1;
+    }
+
+    /* FORM CARD */
+    .form-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow: var(--hover-shadow);
+    }
+
+    .form-field {
+      margin-bottom: 24px;
+    }
+
+    .field-question {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text-muted);
+    }
+
+    input, textarea, select {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 1rem;
+      font-family: inherit;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--focus-ring);
+      box-shadow: 0 0 0 4px rgba(0,0,0,0.05);
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    ::placeholder { color: #a3a3a3; opacity: 1; }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 4px;
+      cursor: pointer;
+      accent-color: #000;
+    }
+
+    .consent-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: #000;
+      color: #fff;
+      font-weight: 600;
+      padding: 16px;
+      border: none;
+      border-radius: 99px;
+      font-size: 1.05rem;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    /* MESSAGES */
+    #success-message {
+      display: none;
+      margin-top: 24px;
+      text-align: center;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+
+    #error-message {
+      display: none;
+      margin-top: 24px;
+      text-align: center;
+      color: #DC2626;
+      font-weight: 500;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      font-size: 0.8rem;
+      color: #9CA3AF;
+      text-align: center;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .split-layout {
+        grid-template-columns: 1fr;
+        gap: 60px;
+      }
+      .container { padding: 0 24px 60px; }
+      .form-card { padding: 32px; }
+      h1 { font-size: 2.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow"></div>
+
+  <div class="container">
+    <header>
+      <a href="index.html" class="logo">
+        <div class="icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </div>
+        Fami.
+      </a>
+      
+      <div class="lang-toggle-container">
+        <button class="lang-btn active" id="btn-sv" onclick="toggleLanguage('sv')">SV</button>
+        <button class="lang-btn" id="btn-en" onclick="toggleLanguage('en')">EN</button>
+      </div>
+    </header>
+
+    <div class="split-layout">
+      <div class="info-side">
+        <span class="badge" data-i18n="sectionLabel">Founding Families</span>
+        <h1 data-i18n="heroTitle">Hjälp oss bygga framtiden.</h1>
+        
+        <p class="lead" data-i18n="heroIntro">
+          Vi söker mer än bara användare. Vi söker familjer som vill vara med och forma plattformen från första början. Din röst avgör hur Fami utvecklas.
+        </p>
+
+        <ul class="benefit-list">
+          <li data-i18n="benefit1">Tidig tillgång till beta-versioner.</li>
+          <li data-i18n="benefit2">Direktkanal till utvecklarna för feedback.</li>
+          <li data-i18n="benefit3">Möjlighet att forma funktioner för integritet och arv.</li>
+        </ul>
+
+        <p style="font-size: 0.85rem; color: #999; line-height: 1.6;" data-i18n="heroFootnote">
+          Vi respekterar din inkorg. Inget spam, bara relevanta uppdateringar om när du kan få tillgång till ditt arkiv.
+        </p>
+      </div>
+
+      <div class="form-card">
+        <!-- OBS: Ingen 'action' här, JavaScript sköter det via /api/join -->
+        <form id="waitlist-form">
+          
+          <div class="form-field">
+            <label for="name" data-i18n="fieldName">Namn</label>
+            <input id="name" name="name" type="text" required 
+                   placeholder="Ditt namn" data-i18n-placeholder="namePlaceholder">
+          </div>
+
+          <div class="form-field">
+            <label for="email" data-i18n="fieldEmail">E-postadress</label>
+            <input id="email" name="email" type="email" required 
+                   placeholder="namn@exempel.se" data-i18n-placeholder="emailPlaceholder">
+          </div>
+
+          <div class="form-field">
+            <label for="country" data-i18n="fieldCountry">Land du bor i</label>
+            <input id="country" name="country" type="text" 
+                   placeholder="T.ex. Sverige, UK, USA" data-i18n-placeholder="countryPlaceholder">
+          </div>
+
+          <div class="form-field">
+            <p class="field-question" data-i18n="familyQuestion">Vilken röst eller berättelse i din familj vill du bevara först?</p>
+            
+            <label for="family" data-i18n="fieldFamily">Vad vill du bevara mest? (Valfritt)</label>
+            <textarea id="family" name="family" 
+                      placeholder="T.ex. “Min mammas röst”, “Mormors sång”, “Min pappas historia från Somalia”, “Farfars berättelse om migration”" 
+                      data-i18n-placeholder="familyPlaceholder"></textarea>
+          </div>
+
+          <div class="checkbox-row">
+            <input id="consent" name="consent" type="checkbox" required>
+            <span class="consent-text" data-i18n="consentText">
+              Jag godkänner att Fami kontaktar mig angående lanseringen.
+            </span>
+          </div>
+
+          <button type="submit" class="btn-submit" data-i18n="submitLabel">Ansök om tillgång</button>
+
+          <div id="success-message" data-i18n="successMessage">Tack! Du står nu i kön. Vi hör av oss snart.</div>
+          <div id="error-message" data-i18n="errorMessage">Något gick fel. Försök igen.</div>
+        </form>
+        <div class="footer-note" data-i18n="privacyNote">Data behandlas säkert och delas aldrig.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentLang = 'sv';
+
+    const content = {
+      sv: {
+        sectionLabel: "Founding Families",
+        heroTitle: "Hjälp oss bygga framtiden.",
+        heroIntro: "Vi söker mer än bara användare. Vi söker familjer som vill vara med och forma plattformen från första början. Din röst avgör hur Fami utvecklas.",
+        benefit1: "Tidig tillgång till beta-versioner.",
+        benefit2: "Direktkanal till utvecklarna för feedback.",
+        benefit3: "Möjlighet att forma funktioner för integritet och arv.",
+        heroFootnote: "Vi respekterar din inkorg. Inget spam, bara relevanta uppdateringar om när du kan få tillgång till ditt arkiv.",
+        fieldName: "Namn",
+        namePlaceholder: "Ditt namn",
+        fieldEmail: "E-postadress",
+        emailPlaceholder: "namn@exempel.se",
+        fieldCountry: "Land du bor i",
+        countryPlaceholder: "T.ex. Sverige, UK, USA",
+        familyQuestion: "Vilken röst eller berättelse i din familj vill du bevara först?",
+        fieldFamily: "Vad vill du bevara mest? (Valfritt)",
+        familyPlaceholder: "T.ex. “Min mammas röst”, “Mormors sång”, “Min pappas historia från Somalia”, “Farfars berättelse om migration”",
+        consentText: "Jag godkänner att Fami kontaktar mig angående lanseringen.",
+        submitLabel: "Ansök om tillgång",
+        privacyNote: "Data behandlas säkert och delas aldrig.",
+        successMessage: "Tack! Du står nu i kön. Vi hör av oss snart.",
+        errorMessage: "Något gick fel. Försök igen."
+      },
+      en: {
+        sectionLabel: "Founding Families",
+        heroTitle: "Help us build the future.",
+        heroIntro: "We are looking for more than just users. We are looking for families who want to help shape the platform from the very beginning. Your voice defines Fami.",
+        benefit1: "Early access to beta versions.",
+        benefit2: "Direct channel to developers for feedback.",
+        benefit3: "Opportunity to shape privacy and legacy features.",
+        heroFootnote: "We respect your inbox. No spam, just relevant updates on when you can access your archive.",
+        fieldName: "Name",
+        namePlaceholder: "Your name",
+        fieldEmail: "Email address",
+        emailPlaceholder: "name@example.com",
+        fieldCountry: "Country of residence",
+        countryPlaceholder: "E.g. Sweden, UK, USA",
+        familyQuestion: "Which voice or story in your family do you want to preserve first?",
+        fieldFamily: "What do you want to preserve the most? (Optional)",
+        familyPlaceholder: "E.g. “My mom’s voice”, “Grandma’s song”, “My dad’s story from Somalia”, “Grandpa’s migration story”",
+        consentText: "I agree that Fami may contact me regarding the launch.",
+        submitLabel: "Request Access",
+        privacyNote: "Data is processed securely and never shared.",
+        successMessage: "Thank you! You are now on the waitlist. We'll be in touch.",
+        errorMessage: "Something went wrong. Please try again."
+      }
+    };
+
+    function toggleLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('fami-lang', lang);
+      
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (content[currentLang][key]) {
+          el.innerText = content[currentLang][key];
+        }
+      });
+
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (content[currentLang][key]) {
+          el.placeholder = content[currentLang][key];
+        }
+      });
+
+      document.getElementById('btn-sv').classList.toggle('active', lang === 'sv');
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const savedLang = localStorage.getItem('fami-lang');
+      if (savedLang) {
+        toggleLanguage(savedLang);
+      }
+    });
+
+    // RESEND FORM LOGIC
+    const form = document.getElementById("waitlist-form");
+    const successMessage = document.getElementById("success-message");
+    const errorMessage = document.getElementById("error-message");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      
+      // Visa laddning
+      const btn = form.querySelector('.btn-submit');
+      const originalText = btn.innerText;
+      btn.innerText = "Skickar...";
+      btn.disabled = true;
+
+      successMessage.style.display = "none";
+      errorMessage.style.display = "none";
+
+      // Samla data
+      const data = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        country: document.getElementById('country').value,
+        family: document.getElementById('family').value
+      };
+
+      try {
+        // Skicka till Resend Backend
+        const response = await fetch('/api/join', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          successMessage.style.display = "block";
+          form.reset();
+        } else {
+          throw new Error('Fel vid serveranrop');
+        }
+      } catch (err) {
+        errorMessage.style.display = "block";
+        console.error(err);
+      } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

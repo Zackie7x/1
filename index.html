@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fami – Ett hem för din historia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Fami är det digitala valvet för din familjs historia. Privat, säkert och byggt för att hålla i generationer." />
+  
+  <!-- Typsnitt Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --text-main: #0a0a0a;
+      --text-muted: #666666;
+      --primary: #166534; 
+      --border: #f0f0f0;
+      --card-bg: #FFFFFF;
+      --hover-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* --- AMBIENT GLOW --- */
+    .ambient-glow {
+      position: absolute;
+      width: 100%;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(22, 101, 52, 0.08) 0%, rgba(255, 255, 255, 0) 60%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* SCROLL REVEAL ANIMATION */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* HEADER */
+    header {
+      padding: 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: -0.04em;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    /* LANGUAGE TOGGLE */
+    .lang-toggle-container {
+      display: flex;
+      background: #f3f4f6;
+      padding: 4px;
+      border-radius: 99px;
+      gap: 2px;
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #888;
+      padding: 6px 14px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .lang-btn.active {
+      background: #fff;
+      color: #000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .lang-btn:hover:not(.active) {
+      color: #000;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      padding: 120px 0 80px;
+      text-align: center;
+      max-width: 780px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      animation: fadeInDown 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 6vw, 4.2rem);
+      line-height: 1.05;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 24px;
+      color: var(--text-main);
+      text-wrap: balance;
+    }
+    
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 48px;
+      text-wrap: balance;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* CTA BUTTON */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      color: #fff;
+      padding: 18px 36px;
+      border-radius: 99px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      font-size: 1.05rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    /* MISSION SECTION */
+    .mission-section {
+      text-align: center;
+      max-width: 800px;
+      margin: 80px auto 100px;
+      padding: 0;
+    }
+
+    .kicker {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .mission-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+
+    .mission-sub {
+      font-size: 1.1rem;
+      color: var(--text-main);
+      margin-bottom: 40px;
+      opacity: 0.8;
+    }
+
+    /* WHY GRID STYLES */
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 40px;
+      text-align: left;
+    }
+
+    .why-card {
+      background: #fff;
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,0.04);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+      border-left: 3px solid var(--primary);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .why-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    .why-card p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+
+    /* BENTO GRID */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 120px;
+    }
+
+    .bento-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .bento-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--hover-shadow);
+      border-color: #e5e5e5;
+    }
+
+    .card-large { grid-column: span 2; }
+    
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+    
+    .card-text {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .card-visual {
+      height: 160px;
+      background: #f9fafb;
+      border-radius: 16px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(0,0,0,0.02);
+      transition: background 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .bento-card:hover .card-visual {
+      background: #f3f4f6;
+    }
+
+    .visual-icon {
+      color: #a3a3a3;
+      width: 64px;
+      height: 64px;
+      stroke-width: 1.2;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bento-card:hover .visual-icon {
+      color: var(--primary);
+      transform: scale(1.1);
+    }
+
+    /* UI MOCKUPS (CSS ONLY) */
+    .ui-tree {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      opacity: 0.6;
+      transition: opacity 0.3s;
+    }
+    .bento-card:hover .ui-tree { opacity: 1; }
+    .tree-node {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      position: relative;
+    }
+    .tree-node::after {
+      content: '';
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      width: 2px;
+      height: 14px;
+      background: #e5e7eb;
+      transform: translateX(-50%);
+    }
+    .tree-node:last-child::after { display: none; }
+    .tree-row { display: flex; gap: 20px; }
+    .tree-row .tree-node::after { display: none; }
+    .tree-row::before {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      width: 44px;
+      height: 2px;
+      background: #e5e7eb;
+      transform: translateX(-50%);
+    }
+    .ui-profile {
+      width: 70%;
+      background: #fff;
+      padding: 12px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0.8;
+    }
+    .ui-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #dcfce7;
+    }
+    .ui-lines { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .ui-line { height: 6px; background: #f3f4f6; border-radius: 4px; width: 80%; }
+    .ui-line.short { width: 50%; }
+
+    /* AUDIO ANIMATION */
+    .waveform {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      height: 40px;
+    }
+    .bar {
+      width: 6px;
+      background: #d1d5db;
+      border-radius: 99px;
+      animation: sound 1.4s ease-in-out infinite;
+    }
+    .bento-card:hover .bar { background: var(--primary); }
+    @keyframes sound {
+      0% { height: 10px; }
+      50% { height: 100%; }
+      100% { height: 10px; }
+    }
+    .bar:nth-child(1) { animation-duration: 0.9s; }
+    .bar:nth-child(2) { animation-duration: 1.1s; }
+    .bar:nth-child(3) { animation-duration: 1.3s; }
+    .bar:nth-child(4) { animation-duration: 0.9s; }
+    .bar:nth-child(5) { animation-duration: 1.2s; }
+
+    /* SECURITY SECTION */
+    .security-list {
+      text-align: left;
+      max-width: 520px;
+      margin: 0 auto;
+      list-style: none;
+      padding: 0;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+    .security-list li {
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .check-icon {
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+    }
+
+    /* STEPS SECTION */
+    .steps-section {
+      padding: 80px 0 120px;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 48px;
+      margin-top: 60px;
+    }
+
+    .step-item h4 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .step-num {
+      font-size: 0.75rem;
+      background: #f3f4f6;
+      color: #666;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-weight: 600;
+    }
+
+    .step-text {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* FOUNDING FAMILIES SECTION */
+    .founding-section {
+      padding: 100px 0;
+      text-align: left;
+    }
+    
+    .founding-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 60px;
+      background: #f9fafb;
+      padding: 60px;
+      border-radius: 24px;
+    }
+
+    .founding-text h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -0.03em;
+    }
+    
+    .founding-text p {
+      color: var(--text-muted);
+      max-width: 480px;
+      font-size: 1.1rem;
+    }
+
+    .fomo-wrapper {
+      text-align: center;
+      min-width: 280px;
+    }
+    .fomo-top {
+      font-size: 0.95rem;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .fomo-bottom {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 12px;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 60px 0;
+      text-align: center;
+      color: #999;
+      font-size: 0.85rem;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 880px) {
+      .hero { padding: 80px 0 40px; }
+      .hero h1 { font-size: 2.5rem; } 
+      .mission-title { font-size: 1.8rem; }
+      .bento-grid { grid-template-columns: 1fr; gap: 20px; }
+      .card-large { grid-column: span 1; }
+      .why-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; gap: 40px; }
+      .founding-flex { flex-direction: column; text-align: center; padding: 40px 24px; }
+      .fomo-wrapper { width: 100%; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- AMBIENT GLOW -->
+  <div class="ambient-glow"></div>
+
+  <div class="container">
+    <!-- HEADER -->
+    <header class="reveal">
+      <a href="#" class="logo">Fami.</a>
+      
+      <!-- SPRÅKVÄXLARE -->
+      <div class="lang-toggle-container">
+        <button class="lang-btn active" id="btn-sv" onclick="changeLanguage('sv')">SV</button>
+        <button class="lang-btn" id="btn-en" onclick="changeLanguage('en')">EN</button>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="status-badge" data-i18n="badge">Begränsad tillgång</div>
+      
+      <h1 class="reveal" data-i18n="title">Ett hem för din familjs historia.</h1>
+      
+      <p class="reveal" style="transition-delay: 0.1s;" data-i18n="subtitle">
+        En privat och krypterad plats för att bevara familjens röster, bilder och berättelser över generationer.
+      </p>
+
+      <div class="reveal" style="transition-delay: 0.2s;">
+        <a href="waitlist.html" class="btn" data-i18n="cta">Ansök om tillgång</a>
+        <p style="margin-top: 16px; font-size: 0.85rem; color: #666;" data-i18n="heroFomo">Begränsade platser – bli en av de första 100 familjerna.</p>
+      </div>
+    </section>
+
+    <!-- MISSION / WHY -->
+    <section class="mission-section reveal">
+      <span class="kicker" data-i18n="whyKicker">Varför Fami behövs</span>
+      <h2 class="mission-title" data-i18n="whyTitle">Det som inte sparas, försvinner.</h2>
+      <p class="mission-sub" data-i18n="whyPreamble">Bevara det som annars går förlorat.</p>
+      
+      <!-- 2x2 GRID -->
+      <div class="why-grid">
+        <div class="why-card">
+          <p data-i18n="whyPoint1">Gamla fotoalbum och lösa hårddiskar försvinner lätt i flyttar eller vid städning.</p>
+        </div>
+        <div class="why-card">
+          <p data-i18n="whyPoint2">Viktiga berättelser och unika röster tystnar när äldre släktingar går bort.</p>
+        </div>
+        <div class="why-card">
+          <p data-i18n="whyPoint3">Familjemedlemmar som bor i olika länder tappar ofta den dagliga kontakten.</p>
+        </div>
+        <div class="why-card">
+          <p data-i18n="whyPoint4">Dagens digitala bilder ligger utspridda i chattar och glöms bort.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENTO GRID (MED UI MOCKUPS) -->
+    <section class="bento-grid">
+      <!-- Card 1: Tree Mockup -->
+      <div class="bento-card card-large reveal">
+        <div class="card-visual">
+          <!-- CSS Tree Mockup -->
+          <div class="ui-tree">
+            <div class="tree-node"></div>
+            <div class="tree-row" style="position: relative;">
+              <div class="tree-node"></div>
+              <div class="tree-node"></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 class="card-title" data-i18n="cardTreeTitle">Släktträd som lever</h3>
+          <p class="card-text" data-i18n="cardTreeText">
+            Bygg ett levande träd där varje gren rymmer mer än bara namn. Koppla rätt minne till rätt person för en djupare förståelse.
+          </p>
+        </div>
+      </div>
+
+      <!-- Card 2: Archive & Search (Animated) -->
+      <div class="bento-card reveal" style="transition-delay: 0.1s;">
+        <div class="card-visual">
+          <div class="waveform">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
+        </div>
+        <div>
+          <h3 class="card-title" data-i18n="cardArchiveTitle">Ett levande arkiv</h3>
+          <p class="card-text" data-i18n="cardArchiveText">
+            Samla röstmemon, foton och vardagsögonblick. Sök snabbt bland allt – oavsett om det är en röst, en bild eller en berättelse.
+          </p>
+        </div>
+      </div>
+
+      <!-- Card 3: Privacy -->
+      <div class="bento-card reveal">
+        <div class="card-visual">
+          <svg xmlns="http://www.w3.org/2000/svg" class="visual-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="card-title" data-i18n="cardPrivacyTitle">Privat och tryggt</h3>
+          <p class="card-text" data-i18n="cardPrivacyText">
+            Er data tillhör er och ingen annan. Vi erbjuder en reklamfri zon utan spårning, designad enbart för familjens trygghet.
+          </p>
+        </div>
+      </div>
+
+      <!-- Card 4: Diaspora (Global UI) -->
+      <div class="bento-card card-large reveal" style="transition-delay: 0.1s;">
+        <div class="card-visual">
+          <!-- UI Profile Card -->
+          <div class="ui-profile">
+            <div class="ui-avatar"></div>
+            <div class="ui-lines">
+              <div class="ui-line"></div>
+              <div class="ui-line short"></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 class="card-title" data-i18n="cardDiasporaTitle">För diasporan</h3>
+          <p class="card-text" data-i18n="cardDiasporaText">
+            Oavsett om er familj finns i Stockholm, Nairobi, London eller Toronto – Fami samlar er historia på ett ställe.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECURITY SECTION (SVG IKONER) -->
+    <section class="mission-section reveal" style="margin-top: -40px; margin-bottom: 80px;">
+      <h2 class="mission-title" style="font-size: 1.8rem;" data-i18n="secTitle">Trygg från grunden</h2>
+      <p class="mission-text" style="margin-bottom: 24px;" data-i18n="secDesc">
+        Vi bygger säkerhet i världsklass för att skydda era mest personliga minnen.
+      </p>
+      <ul class="security-list">
+        <li>
+          <div class="check-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span data-i18n="secText1">All information lagras med avancerad kryptering.</span>
+        </li>
+        <li>
+          <div class="check-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span data-i18n="secText2">Vi säljer aldrig er data och visar ingen reklam.</span>
+        </li>
+        <li>
+          <div class="check-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span data-i18n="secText3">Ni äger fullständiga rättigheter till allt ni laddar upp.</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="steps-section">
+      <!-- Klass för centrering och bredd -->
+      <div class="section-intro reveal">
+        <span class="kicker" data-i18n="howKicker">Hur det funkar</span>
+        <h2 class="mission-title" data-i18n="howTitle">Ett digitalt vardagsrum</h2>
+        <p class="mission-text" data-i18n="howText">
+          En trygg, lugn plats där släkten kan bidra med minnen utan att det känns som ännu ett socialt medie-konto.
+        </p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-item reveal">
+          <h4><span class="step-num">01</span> <span data-i18n="step1Title">Lägg grunden</span></h4>
+          <p class="step-text" data-i18n="step1Text">
+            Börja med dig själv och dina föräldrar. Släktträdet är skelettet som allt annat hänger på.
+          </p>
+        </div>
+        
+        <div class="step-item reveal" style="transition-delay: 0.1s;">
+          <h4><span class="step-num">02</span> <span data-i18n="step2Title">Väck historien till liv</span></h4>
+          <p class="step-text" data-i18n="step2Text">
+            Scanna gamla foton, spela in mormors röst vid köksbordet. Fyll arkivet med det som är värt att spara.
+          </p>
+        </div>
+        
+        <div class="step-item reveal" style="transition-delay: 0.2s;">
+          <h4><span class="step-num">03</span> <span data-i18n="step3Title">Upptäck arvet</span></h4>
+          <p class="step-text" data-i18n="step3Text">
+            Barn och barnbarn kan utforska sin historia genom sparade röster, bilder och berättelser.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOUNDING FAMILIES -->
+    <section class="founding-section reveal">
+      <div class="founding-flex">
+        <div class="founding-text">
+          <h3 data-i18n="founderTitle">Founding Families</h3>
+          <p data-i18n="founderText">
+            Vi välkomnar de första 100 familjerna att vara med och forma plattformen från grunden. Ni får tidig tillgång och en unik möjlighet att påverka utvecklingen.
+          </p>
+        </div>
+        <div class="fomo-wrapper">
+          <p class="fomo-top" data-i18n="fomoTop">Säkra er plats i kön och börja bygga ert arkiv.</p>
+          <a href="waitlist.html" class="btn" style="width: 100%; text-align: center;" data-i18n="founderLink">Gå med på väntelistan</a>
+          <p class="fomo-bottom" data-i18n="fomoBottom">Antalet platser i nästa insläpp är strikt begränsat.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      &copy; 2025 Fami. All rights reserved.
+    </footer>
+  </div>
+
+  <script>
+    // SCROLL REVEAL SCRIPT
+    document.addEventListener("DOMContentLoaded", function() {
+      // Check localStorage for language logic
+      const savedLang = localStorage.getItem('fami-lang');
+      if (savedLang) {
+        changeLanguage(savedLang);
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    });
+
+    let currentLang = 'sv';
+
+    const content = {
+      sv: {
+        badge: "Begränsad tillgång",
+        title: "Ett hem för din familjs historia.",
+        subtitle: "En privat och krypterad plats för att bevara familjens röster, bilder och berättelser över generationer.",
+        cta: "Ansök om tillgång",
+        heroFomo: "Begränsade platser – bli en av de första 100 familjerna.",
+        
+        // WHY Section
+        whyKicker: "Varför Fami behövs",
+        whyTitle: "Det som inte sparas, försvinner.",
+        whyPreamble: "Bevara det som annars går förlorat.",
+        whyPoint1: "Gamla fotoalbum och lösa hårddiskar försvinner lätt i flyttar eller vid städning.",
+        whyPoint2: "Viktiga berättelser och unika röster tystnar när äldre släktingar går bort.",
+        whyPoint3: "Familjemedlemmar som bor i olika länder tappar ofta den dagliga kontakten.",
+        whyPoint4: "Dagens digitala bilder ligger utspridda i chattar och glöms bort.",
+
+        // BENTO Cards
+        cardTreeTitle: "Släktträd som lever",
+        cardTreeText: "Bygg ett levande träd där varje gren rymmer mer än bara namn. Koppla rätt minne till rätt person för en djupare förståelse.",
+        
+        cardArchiveTitle: "Ett levande arkiv",
+        cardArchiveText: "Samla röstmemon, foton och vardagsögonblick. Sök snabbt bland allt – oavsett om det är en röst, en bild eller en berättelse.",
+        
+        cardPrivacyTitle: "Privat och tryggt",
+        cardPrivacyText: "Er data tillhör er och ingen annan. Vi erbjuder en reklamfri zon utan spårning, designad enbart för familjens trygghet.",
+        
+        cardDiasporaTitle: "För diasporan",
+        cardDiasporaText: "Oavsett om er familj finns i Stockholm, Nairobi, London eller Toronto – Fami samlar er historia på ett ställe.",
+
+        // Security Section
+        secTitle: "Trygg från grunden",
+        secDesc: "Vi bygger säkerhet i världsklass för att skydda era mest personliga minnen.",
+        secText1: "All information lagras med avancerad kryptering.",
+        secText2: "Vi säljer aldrig er data och visar ingen reklam.",
+        secText3: "Ni äger fullständiga rättigheter till allt ni laddar upp.",
+
+        // HOW Section
+        howKicker: "Hur det funkar",
+        howTitle: "Ett digitalt vardagsrum",
+        howText: "En trygg, lugn plats där släkten kan bidra med minnen utan att det känns som ännu ett socialt medie-konto.",
+        
+        step1Title: "Lägg grunden",
+        step1Text: "Börja med dig själv och dina föräldrar. Släktträdet är skelettet som allt annat hänger på.",
+        
+        step2Title: "Väck historien till liv",
+        step2Text: "Scanna gamla foton, spela in mormors röst vid köksbordet. Fyll arkivet med det som är värt att spara.",
+        
+        step3Title: "Upptäck arvet",
+        step3Text: "Barn och barnbarn kan utforska sin historia genom sparade röster, bilder och berättelser.",
+
+        // Founding
+        founderTitle: "Founding Families",
+        founderText: "Vi välkomnar de första 100 familjerna att vara med och forma plattformen från grunden. Ni får tidig tillgång och en unik möjlighet att påverka utvecklingen.",
+        founderLink: "Gå med på väntelistan",
+        fomoTop: "Säkra er plats i kön och börja bygga ert arkiv.",
+        fomoBottom: "Antalet platser i nästa insläpp är strikt begränsat."
+      },
+      en: {
+        badge: "Limited Access",
+        title: "A home for your family history.",
+        subtitle: "A private and encrypted place to preserve family voices, photos, and stories across generations.",
+        cta: "Request Access",
+        heroFomo: "Limited spots – become one of the first 100 families.",
+
+        // WHY Section
+        whyKicker: "Why Fami is needed",
+        whyTitle: "What isn't saved, disappears.",
+        whyPreamble: "Preserve what is otherwise lost.",
+        whyPoint1: "Old photo albums and loose hard drives are easily lost during moves or cleaning.",
+        whyPoint2: "Important stories and unique voices go silent when older relatives pass away.",
+        whyPoint3: "Family members living in different countries often lose daily contact.",
+        whyPoint4: "Today's digital photos are scattered in chats and forgotten.",
+
+        // BENTO Cards
+        cardTreeTitle: "Living Family Trees",
+        cardTreeText: "Build a living tree where every branch holds more than just names. Connect the right memory to the right person for deeper understanding.",
+        
+        cardArchiveTitle: "A Living Archive",
+        cardArchiveText: "Collect voice memos, photos, and everyday moments. Search quickly through everything – whether it's a voice, a picture, or a story.",
+        
+        cardPrivacyTitle: "Private & Secure",
+        cardPrivacyText: "Your data belongs to you and no one else. We offer an ad-free zone without tracking, designed solely for your family's safety.",
+        
+        cardDiasporaTitle: "For the Diaspora",
+        cardDiasporaText: "Whether your family is in Stockholm, Nairobi, London, or Toronto – Fami gathers your history in one place.",
+
+        // Security Section
+        secTitle: "Safe from the ground up",
+        secDesc: "We build world-class security to protect your most personal memories.",
+        secText1: "All information is stored with advanced encryption.",
+        secText2: "We never sell your data and show no ads.",
+        secText3: "You own full rights to everything you upload.",
+
+        // HOW Section
+        howKicker: "How it works",
+        howTitle: "A digital living room",
+        howText: "A safe, calm place where relatives can contribute memories without it feeling like just another social media account.",
+        
+        step1Title: "Build the foundation",
+        step1Text: "Start with yourself and your parents. The family tree is the skeleton that everything else hangs onto.",
+        
+        step2Title: "Bring history to life",
+        step2Text: "Scan old photos, record grandmother's voice at the kitchen table. Fill the archive with what's worth saving.",
+        
+        step3Title: "Discover the heritage",
+        step3Text: "Children and grandchildren can explore their history through saved voices, photos, and stories.",
+
+        // Founding
+        founderTitle: "Founding Families",
+        founderText: "We welcome the first 100 families to help shape the platform from the ground up. You get early access and a unique opportunity to influence development.",
+        founderLink: "Join the waitlist",
+        fomoTop: "Secure your spot in line and start building your archive.",
+        fomoBottom: "The number of spots in the next intake is strictly limited."
+      }
+    };
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('fami-lang', lang); // Save preference
+      
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (content[currentLang][key]) {
+          el.innerText = content[currentLang][key];
+        }
+      });
+
+      // Toggle active class
+      document.getElementById('btn-sv').classList.toggle('active', lang === 'sv');
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    }
+  </script>
+</body>
+</html>
